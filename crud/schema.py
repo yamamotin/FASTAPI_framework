@@ -1,4 +1,3 @@
-from datetime import datetime
 from pydantic import BaseModel
 from typing import Optional
 
@@ -7,7 +6,7 @@ from typing import Optional
 class Cats(BaseModel):
     id: int
     breed: str
-    loc_origin: str
-    body_type: str
-    coat_lenght: int
+    locorigin: str
+    bodytype: str
+    coatlenght: int
     pattern: Optional[bool] = None

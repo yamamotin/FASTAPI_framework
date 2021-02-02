@@ -1,35 +1,39 @@
 from fastapi import FastAPI
+import sqlalchemy
 import uvicorn
 
-import sqlalchemy
 from typing import List
-
 from crud.model import cats, database
 from crud.schema import Cats
 
 app = FastAPI()
 
 if __name__ == "__main__":
-
     uvicorn.run(app, host="0.0.0.0", port=8000)
 
+#DB connection
+@app.on_event("startup")
+async def startup():
+    await database.connect()
+
+@app.on_event("shutdown")
+async def shutdown():
+    await database.disconnect()
+
 # Methodos de manipulação do bd
-
-@app.get("/get", response_model=List[Cats], status_code=200)
+@app.get("/get", response_model=List[Cats])
 async def get_cats():
-    query = cats.select()
+    query = cats.select(cats.c.id != None)
     allcats = await database.fetch_all(query)
-    if cats is None:
-        return {"message": " Nenhum cat existente!"}
-    else:
-        return cats
+    return allcats
 
 
-@app.get("/get/{id}", response_model=Cats, status_code=200)
-async def get_cat_by_id(id:int):
-    query = Cats.select().where(Cats.id == id)
-    return await database.fetch_one(query=query)
-
+@app.get("/get/{buscador}", response_model=Cats, status_code=200)
+async def get_cat_by_id(buscador):
+    query = cats.select().where(cats.c.buscador == buscador)
+    catid = await database.fetch_one(query=query)
+    return catid
+    
 
 @app.post("/create/", response_model=Cats, status_code=201)
 async def create_cat(post: Cats):
