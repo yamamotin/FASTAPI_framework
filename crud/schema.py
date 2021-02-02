@@ -1,5 +1,6 @@
 from datetime import datetime
 from pydantic import BaseModel
+from typing import Optional
 
 #pydantic basemodel schema
 
@@ -9,4 +10,4 @@ class Cats(BaseModel):
     loc_origin: str
     body_type: str
     coat_lenght: int
-    pattern: bool
+    pattern: Optional[bool] = None
