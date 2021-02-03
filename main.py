@@ -28,13 +28,13 @@ async def get_cats():
     allcats = await database.fetch_all(query)
     return allcats
 
-''' TODO
+#TODO
 @app.get("/get/{buscador}/{comparador}", response_model=List[Cats])
 async def get_cat_by_id(buscador, comparador):
-    query = cats.select().where(comparador == "cats.c."+buscador)
+    query = cats.select().where("cats.c."+buscador)
     catid = await database.fetch_all(query)
     return catid
-'''
+
 @app.post("/create/", response_model=Cats, status_code=201)
 async def create_cat(cat: CatsRegister):
     gID = int(uuid.uuid1())
@@ -52,14 +52,21 @@ async def create_cat(cat: CatsRegister):
         **cat.dict(),
     }
 
-'''TODO
+
 @app.put("/update/{id}", response_model=Cats)
-async def update(id:int, post: Cats):
-    query = Cats.update().where(Cats.id == id).values(breed=post.breed, locoriging=post.locorigin,bodytype=post.bodytype ,coatlenght=post.coatlenght,pattern=post.pattern)
-    updateid = await database.execute(query=query)
-    return {**post.dict(), "id": updateid}
-'''
+async def update(id:int, post: CatsRegister):
+    query = cats.update().where(cats.c.id == id).values(
+        breed=post.breed, 
+        location_of_origin=post.location_of_origin,
+        coat_length=post.coat_length,
+        body_type=post.body_type,
+        pattern=post.pattern
+        )
+    await database.execute(query=query)
+    return {**post.dict(), "id":id}
+
 @app.delete("/delete/{id}", response_model=Cats)
 async def delete(id: int):
-    query = cats.delete().where(id == cats.c.id)
-    return await database.execute(query=query)
+    query = cats.delete().where(cats.c.id == id)
+    await database.execute(query)
+    return id

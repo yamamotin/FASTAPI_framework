@@ -13,7 +13,7 @@ cats = sqlalchemy.Table("cats", metadata,
     sqlalchemy.Column("id", sqlalchemy.Integer, primary_key=True),
     sqlalchemy.Column("breed", sqlalchemy.String(64)),
     sqlalchemy.Column("location_of_origin", sqlalchemy.String(32)),
-    sqlalchemy.Column("coat_length", sqlalchemy.String(8)),
-    sqlalchemy.Column("body_type", sqlalchemy.Integer),
+    sqlalchemy.Column("coat_length", sqlalchemy.Integer),
+    sqlalchemy.Column("body_type", sqlalchemy.String),
     sqlalchemy.Column("pattern", sqlalchemy.Boolean)
 )
