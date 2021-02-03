@@ -30,17 +30,18 @@ async def get_cats():
     return allcats
 
 
-@app.get("/get/{buscador}/{parametro}", response_model=List[Cats], status_code=200)
-async def get_cat_by_id(buscador, parametro):
-    query = cats.select().where(cats.c.buscador == parametro)
-    catid = await database.fetch_one(query=query)
+@app.get("/get/{buscador}/{comparador}", response_model=List[Cats], status_code=200)
+async def get_cat_by_id(buscador, comparador):
+    query = cats.select().where("cats.c."+ buscador == comparador)
+    catid = await database.fetch_all(query)
     return catid
     
-
+''' TODO
 @app.post("/create/", response_model=Cats, status_code=201)
 async def create_cat(post: Cats):
+    cats._autoincrement_column.id
     query = cats.insert().values(breed=post.breed, locoriging=post.locorigin,bodytype=post.bodytype ,coatlenght=post.coatlenght,pattern=post.pattern)
-    createdquery = await metadata.query
+    createdquery = await database.execute(query=query)
     return {**post.dict(), "id": createdquery}
 
 
@@ -55,3 +56,4 @@ async def update(id:int, post: Cats):
 async def delete(id:int):
     query = posts.delete().where(posts.c.id == id)
     return await database.execute(query)
+'''
