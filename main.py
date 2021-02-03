@@ -1,11 +1,10 @@
 from fastapi import FastAPI
-import sqlalchemy
-import uvicorn
+import uvicorn, uuid, sqlalchemy
 
 from typing import List
 from crud import model
 from crud.model import cats, database, metadata, engine
-from crud.schema import Cats
+from crud.schema import Cats, CatsRegister
 
 app = FastAPI()
 
@@ -29,31 +28,38 @@ async def get_cats():
     allcats = await database.fetch_all(query)
     return allcats
 
-
-@app.get("/get/{buscador}/{comparador}", response_model=List[Cats], status_code=200)
+''' TODO
+@app.get("/get/{buscador}/{comparador}", response_model=List[Cats])
 async def get_cat_by_id(buscador, comparador):
-    query = cats.select().where("cats.c."+ buscador == comparador)
+    query = cats.select().where(comparador == "cats.c."+buscador)
     catid = await database.fetch_all(query)
     return catid
-    
-''' TODO
+'''
 @app.post("/create/", response_model=Cats, status_code=201)
-async def create_cat(post: Cats):
-    cats._autoincrement_column.id
-    query = cats.insert().values(breed=post.breed, locoriging=post.locorigin,bodytype=post.bodytype ,coatlenght=post.coatlenght,pattern=post.pattern)
-    createdquery = await database.execute(query=query)
-    return {**post.dict(), "id": createdquery}
+async def create_cat(cat: CatsRegister):
+    gID = int(uuid.uuid1())
+    query = cats.insert().values(
+        breed=cat.breed,
+        location_of_origin=cat.location_of_origin, 
+        coat_length=cat.coat_length,
+        body_type=cat.body_type,
+        pattern=cat.pattern
+    )
+    
+    await database.execute(query)
+    return {
+        "id":gID,
+        **cat.dict(),
+    }
 
-
+'''TODO
 @app.put("/update/{id}", response_model=Cats)
 async def update(id:int, post: Cats):
     query = Cats.update().where(Cats.id == id).values(breed=post.breed, locoriging=post.locorigin,bodytype=post.bodytype ,coatlenght=post.coatlenght,pattern=post.pattern)
     updateid = await database.execute(query=query)
     return {**post.dict(), "id": updateid}
-
-
-@app.delete("/delete/{id}", response_model=Cats)
-async def delete(id:int):
-    query = posts.delete().where(posts.c.id == id)
-    return await database.execute(query)
 '''
+@app.delete("/delete/{id}", response_model=Cats)
+async def delete(id: int):
+    query = cats.delete().where(id == cats.c.id)
+    return await database.execute(query=query)
