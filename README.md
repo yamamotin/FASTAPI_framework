@@ -10,7 +10,6 @@
 # Get => retorna lista de todos os gatos
 # Get_by_Buscador_&_comparador =>
     # BUSCA
-    # "id" = 1 ; "ou valores entre 1 e Linhas da tabela"
     # "breed"
     # "location_of_origin"
     # "coat_lenght" = 1;2;3;4;5;6;...
@@ -20,4 +19,6 @@
 
 
 # Este é um software desenvolvido por Eron Yamamoto
-# &copy todos direitos reservados.
+# &copy
+# Link youtube demo:
+# https://youtu.be/zOpGYJA952Q
