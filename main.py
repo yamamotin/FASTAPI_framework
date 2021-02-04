@@ -31,9 +31,12 @@ async def get_cats():
 #TODO
 @app.get("/get/{buscador}/{comparador}", response_model=List[Cats])
 async def get_cat_by_id(buscador, comparador):
-    query = cats.select().where("cats.c."+buscador)
-    catid = await database.fetch_all(query)
-    return catid
+    query = await get_cats()
+    onlycats = []
+    for cat in query:
+        if cat[buscador] == comparador:
+            onlycats.append(cat)
+    return onlycats
 
 @app.post("/create/", response_model=Cats, status_code=201)
 async def create_cat(cat: CatsRegister):
@@ -69,4 +72,4 @@ async def update(id:int, post: CatsRegister):
 async def delete(id: int):
     query = cats.delete().where(cats.c.id == id)
     await database.execute(query)
-    return id
+    return True
