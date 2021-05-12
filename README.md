@@ -6,6 +6,8 @@
 # Certifique-se de que está no diretório do file main.py
 # Use o comando "uvicorn main:app --reload"
 
+# acesse http://127.0.0.1:8000/docs#/
+
 ##### METHODS ######
 # Get => retorna lista de todos os gatos
 # Get_by_Buscador_&_comparador =>

@@ -1,4 +1,7 @@
 from fastapi import FastAPI
+from fastapi.routing import APIRouter
+from sqlalchemy.sql.expression import false
+from starlette.responses import RedirectResponse
 import uvicorn, uuid, sqlalchemy
 
 from typing import List
@@ -7,9 +10,11 @@ from crud.model import cats, database, metadata, engine
 from crud.schema import Cats, CatsRegister
 
 app = FastAPI()
+crudroute = APIRouter()
+app.include_router(crudroute,prefix="/crud")
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="127.0.0.1", port=8000)
 
 #DB connection
 @app.on_event("startup")
@@ -22,6 +27,11 @@ async def shutdown():
     await database.disconnect()
 
 # Methodos de manipulação do bd
+@app.get("/")
+async def redirect():
+    adminpage = RedirectResponse(url='http://127.0.0.1:8000/docs#/')
+    return adminpage
+
 @app.get("/get", response_model=List[Cats])
 async def get_cats():
     query = cats.select(cats.c.id != None)
@@ -29,12 +39,17 @@ async def get_cats():
     return allcats
 
 #TODO
-@app.get("/get/{buscador}/{comparador}", response_model=List[Cats])
-async def get_cat_by_id(buscador, comparador):
-    query = await get_cats()
+@app.get("/get/{parametro}/{comparador}", response_model=List[Cats])
+async def get_cat_by_id(parametro, comparador):
+    allcats = await get_cats()
     onlycats = []
-    for cat in query:
-        if cat[buscador] == comparador:
+    for cat in allcats:
+        if parametro.lower() == "pattern":
+            if comparador.lower() == "false" and cat.pattern == 0:
+                onlycats.append(cat)
+            elif comparador.lower() == "true" and cat.pattern == 1:
+                onlycats.append(cat)
+        elif cat[parametro].lower() == comparador.lower():
             onlycats.append(cat)
     return onlycats
 
@@ -70,6 +85,5 @@ async def update(id:int, post: CatsRegister):
 
 @app.delete("/delete/{id}", response_model=Cats)
 async def delete(id: int):
-    query = cats.delete().where(cats.c.id == id)
-    await database.execute(query)
-    return True
+    await database.execute(cats.delete().where(cats.c.id == id))
+    return []
