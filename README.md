@@ -23,7 +23,3 @@ Para construir o ambiente use o comando "python -m virtualenv {nomedoambiente}"
         # "coat_lenght" = 1;2;3;4;5;6;...
         # "body_type"   = "Pequeno , Medio , Grande"
         # "pattern"     = True or False
-
-
-# Este é um software desenvolvido para processo seletivo
-# &copy
